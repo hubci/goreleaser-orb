@@ -53,12 +53,12 @@ commands:
 
 jobs:
   release:
-    docker:
-      - image: cimg/base:2020.09
-    description: Release a Go (golang) project or do a test build.
     parameters:
       version:
         description: The GoReleaser version. This is a full SemVer version.
+        type: string
+      go-version:
+        description: The version of Go to build with.
         type: string
       dry-run:
         description: |
@@ -66,6 +66,9 @@ jobs:
           you when true.
         type: boolean
         default: false
+    docker:
+      - image: cimg/go:<<parameters.go-version>>
+    description: Release a Go (golang) project or do a test build.
     steps:
       - checkout
       - install:
