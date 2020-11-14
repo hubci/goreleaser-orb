@@ -1,0 +1,74 @@
+version: 2.1
+
+description: |
+  Easily install and use GoReleaser on CircleCI. GoReleaser is a Go (Golang)
+  publishing and release tool. You can publish Go projects to GitHub, Brew,
+  Snap, and more.
+
+  Currently supports Linux on amd64.
+
+display:
+  home_url: "https://circleci.com/developer/orbs/orb/hubci/goreleaser"
+  source_url: "https://github.com/hubci/goreleaser-orb"
+
+orbs:
+  os-detect: circleci/os-detect@0.2
+
+commands:
+  install:
+    description: |
+      Install GoReleaser in a build (for amd64 Linux). Installs to ~/bin.
+    parameters:
+      version:
+        description: The GoReleaser version. This is a full SemVer version.
+        type: string
+    steps:
+      - os-detect/init
+      - run:
+          name: "Install GoReleaser"
+          command: |
+            # This line and assuming this path is in PATH should move to os-detect at some point.
+            mkdir -p ~/bin
+
+            dlURL="https://github.com/goreleaser/goreleaser/releases/download/v<<parameters.version>>/goreleaser_Linux_x86_64.tar.gz"
+            curl -sSL $dlURL | $SUDO tar -xz -C ~/bin goreleaser
+  release:
+    description: Run GoReleaser. Optionally without actually publishing.
+    parameters:
+      dry-run:
+        description: |
+          Basically runs `goreleaser --snapshot --skip-publish --rm-dist` for
+          you when true.
+        type: boolean
+        default: false
+    steps:
+      - when:
+          condition: <<parameters.dry-run>>
+          steps:
+            - run: goreleaser --snapshot --skip-publish --rm-dist
+      - unless:
+          condition: <<parameters.dry-run>>
+          steps:
+            - run: goreleaser
+
+jobs:
+  release:
+    docker:
+      - image: cimg/base:2020.09
+    description: Release a Go (golang) project or do a test build.
+    parameters:
+      version:
+        description: The GoReleaser version. This is a full SemVer version.
+        type: string
+      dry-run:
+        description: |
+          Basically runs `goreleaser --snapshot --skip-publish --rm-dist` for
+          you when true.
+        type: boolean
+        default: false
+    steps:
+      - checkout
+      - install:
+          version: <<parameters.version>>
+      - release:
+          dry-run: <<parameters.dry-run>>
