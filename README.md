@@ -1,3 +1,5 @@
+![GoReleaser Orb Logo](./img/header.png)
+
 # GoReleaser Orb [![CircleCI Build Status](https://circleci.com/gh/hubci/goreleaser-orb.svg?style=shield "CircleCI Build Status")](https://circleci.com/gh/hubci/goreleaser-orb) [![CircleCI Orb Version](https://img.shields.io/badge/endpoint.svg?url=https://badges.circleci.io/orb/hubci/goreleaser)][reg-page] [![GitHub License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://github.com/hubci/goreleaser-orb/blob/master/LICENSE)
 
 The GoReleaser Orb for CircleCI.
