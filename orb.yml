@@ -75,3 +75,61 @@ jobs:
           version: <<parameters.version>>
       - release:
           dry-run: <<parameters.dry-run>>
+
+examples:
+  main:
+    description: "An example of how to use the job included in the GoReleaser orb."
+    usage:
+      version: 2.1
+
+      orbs:
+        gor: hubci/goreleaser@1.0
+
+      workflows:
+        # General workflow for regular commits
+        main:
+          jobs:
+            - test
+            - gor/release:
+                version: "0.147.1"
+                go-version: "1.15.5"
+                dry-run: true
+        # Workflow for releasing with git tags
+        release:
+          jobs:
+            - test:
+                filters:
+                  branches:
+                    ignore: /.*/
+                  tags:
+                    # Simplified SemVer regex
+                    only: /^v\d+\.\d+\.\d+$/
+            - gor/release:
+                version: "0.147.1"
+                go-version: "1.15.5"
+                filters:
+                  branches:
+                    ignore: /.*/
+                  tags:
+                    # Simplified SemVer regex
+                    only: /^v\d+\.\d+\.\d+$/
+
+      jobs:
+        test:
+          docker:
+            - image: cimg/go:1.15.5
+          steps:
+            - checkout
+            - restore_cache:
+                keys:
+                  - go-mod-v1
+            - run:
+                name: "Download Dependancies"
+                command: cd src && go mod download
+            - run:
+                name: "Run Tests"
+                command: cd src && go test
+            - save_cache:
+                key: go-mod-v1
+                paths:
+                  - "/go/pkg/mod"
