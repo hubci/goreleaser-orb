@@ -15,6 +15,7 @@ Example usage as well as a list of available executors, commands, and jobs are a
 
 [CircleCI Orb Registry Page][reg-page] - The official registry page for this orb will all versions, executors, commands, and jobs described.  
 [CircleCI Orb Docs](https://circleci.com/docs/2.0/orb-intro/#section=configuration) - Docs for using and creating CircleCI Orbs.  
+[GoReleaser Website](https://goreleaser.com/) - the official GoReleaser website.
 
 
 ## Contributing
