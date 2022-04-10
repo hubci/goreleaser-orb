@@ -24,8 +24,12 @@ executors:
       xcode: 11.7.0
 
 workflows:
-  main:
-    unless: << pipeline.parameters.run-integration-tests >>
+  main-wf:
+    when:
+      not:
+        or:
+          - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+          - << pipeline.parameters.run-integration-tests >>
     jobs:
       - orb-tools/lint
       - orb-tools/publish-dev:
@@ -63,6 +67,21 @@ workflows:
               only: trunk
           context:
             - orbs
+  weekly-cron-wf:
+    when:
+      and:
+        - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+    jobs:
+      - orb-tools/publish-dev:
+          orb-name: hubci/goreleaser
+          alpha-version-ref: "dev:testing"
+          checkout: true
+          attach-workspace: false
+          orb-path: orb.yml
+          requires:
+            - orb-tools/lint
+          context: orbs
+
 
 jobs:
   integration-test-install:
