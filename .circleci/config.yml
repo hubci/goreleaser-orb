@@ -9,19 +9,19 @@ parameters:
     default: false
 
 orbs:
-  gor: hubci/goreleaser@<<pipeline.parameters.dev-orb-version>>
-  orb-tools: circleci/orb-tools@10.0
+  gor: hubci/goreleaser@<< pipeline.parameters.dev-orb-version >>
+  orb-tools: circleci/orb-tools@10.1
 
 executors:
   cimg:
     docker:
-      - image: cimg/base:2021.04
+      - image: cimg/base:2022.04
   linux:
     machine:
-      image: ubuntu-2004:202104-01
+      image: ubuntu-2004:202201-02
   mac:
     macos:
-      xcode: 11.7.0
+      xcode: 13.0.0
 
 workflows:
   main-wf:
@@ -92,7 +92,7 @@ jobs:
     executor: <<parameters.runner>>
     steps:
       - gor/install:
-          version: "0.165.0"
+          version: "1.7.0"
       - run:
           name: "Try running GoReleaser"
           command: goreleaser --version
