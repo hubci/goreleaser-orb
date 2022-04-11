@@ -55,6 +55,7 @@ workflows:
               runner:
                 - cimg
                 - linux
+                - mac
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: hubci/goreleaser
           add-pr-comment: true
@@ -88,7 +89,6 @@ jobs:
     parameters:
       runner:
         type: executor
-        default: cimg
     executor: <<parameters.runner>>
     steps:
       - gor/install:
