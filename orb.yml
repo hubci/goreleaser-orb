@@ -13,6 +13,27 @@ display:
 
 orbs:
   ci: hubci/sphere@0.1
+  go: circleci/go@1.7
+
+executors:
+  cimg:
+    docker:
+      - image: cimg/go:<< parameters.go-version >>
+    parameters:
+      go-version:
+        type: string
+  linux:
+    machine:
+      image: ubuntu-2004:202201-02
+    parameters:
+      go-version:
+        type: string
+  mac:
+    macos:
+      xcode: 13.0.0
+    parameters:
+      go-version:
+        type: string
 
 commands:
   install:
@@ -87,11 +108,32 @@ jobs:
           you when true.
         type: boolean
         default: false
-    docker:
-      - image: cimg/go:<<parameters.go-version>>
+      image:
+        description: |
+          Which image/executor technology to run with. Check the executors
+          shipped with this orb for possible values. Defaults to "cimg"
+          which uses the `cimg/go` Convenience Image.
+        type: enum
+        enum:
+          - cimg
+          - linux
+          - mac
+        default: cimg
+      checkout:
+        description: "Whether or not to run the CircleCI checkout step."
+        type: boolean
+        default: true
+    executor:
+      name: << parameters.image >>
+      go-version: << parameters.go-version >>
     description: Release a Go (golang) project or do a test build.
     steps:
-      - checkout
+      - when:
+          condition: << parameters.checkout >>
+          steps:
+            - checkout
+      - go/install:
+          version: << parameters.go-version >>
       - install:
           version: <<parameters.version>>
       - release:
@@ -104,19 +146,19 @@ examples:
       version: 2.1
 
       orbs:
-        gor: hubci/goreleaser@1.0
+        gor: hubci/goreleaser@2.0
 
       workflows:
         # General workflow for regular commits
-        main:
+        main-wf:
           jobs:
             - test
             - gor/release:
-                version: "0.147.1"
-                go-version: "1.15.5"
+                version: "1.7.0"
+                go-version: "1.18"
                 dry-run: true
         # Workflow for releasing with git tags
-        release:
+        release-wf:
           jobs:
             - test:
                 filters:
@@ -126,8 +168,8 @@ examples:
                     # Simplified SemVer regex
                     only: /^v\d+\.\d+\.\d+$/
             - gor/release:
-                version: "0.147.1"
-                go-version: "1.15.5"
+                version: "1.7.0"
+                go-version: "1.18"
                 filters:
                   branches:
                     ignore: /.*/
@@ -138,7 +180,7 @@ examples:
       jobs:
         test:
           docker:
-            - image: cimg/go:1.15.5
+            - image: cimg/go:1.18
           steps:
             - checkout
             - restore_cache:
@@ -154,3 +196,20 @@ examples:
                 key: go-mod-v1
                 paths:
                   - "/go/pkg/mod"
+  custom-image:
+    description: "An example of how to use the job included in the GoReleaser orb but with a custom image."
+    usage:
+      version: 2.1
+
+      orbs:
+        gor: hubci/goreleaser@2.0
+
+      workflows:
+        # General workflow for regular commits
+        main-wf:
+          jobs:
+            - gor/release:
+                version: "1.7.0"
+                go-version: "1.18"
+                dry-run: true
+                image: mac
