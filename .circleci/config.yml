@@ -71,6 +71,12 @@ workflows:
                 - "1.18"
               dry-run:
                 - true
+      - gor/release:
+          name: config-test
+          version: "1.7.0"
+          go-version: "1.18"
+          dry-run: true
+          config: "./.goreleaser-mac.yml"
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: hubci/goreleaser
           add-pr-comment: true
@@ -79,6 +85,7 @@ workflows:
           requires:
             - integration-test-install
             - gor/release
+            - config-test
           filters:
             branches:
               only: trunk
