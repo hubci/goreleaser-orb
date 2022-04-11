@@ -5,7 +5,7 @@ description: |
   publishing and release tool. You can publish Go projects to GitHub, Brew,
   Snap, and more.
 
-  Currently supports Linux on amd64.
+  Currently supports Linux on amd64 and arm64.
 
 display:
   home_url: "https://circleci.com/developer/orbs/orb/hubci/goreleaser"
