@@ -56,6 +56,21 @@ workflows:
                 - cimg
                 - linux
                 - mac
+      - gor/release:
+          matrix:
+            parameters:
+              image:
+                - cimg
+                - linux
+                - mac
+              version:
+                - "1.3.0"
+                - "1.7.0"
+              go-version:
+                - "1.17.7"
+                - "1.18"
+              dry-run:
+                - true
       - orb-tools/dev-promote-prod-from-commit-subject:
           orb-name: hubci/goreleaser
           add-pr-comment: true
@@ -63,6 +78,7 @@ workflows:
           publish-version-tag: true
           requires:
             - integration-test-install
+            - gor/release
           filters:
             branches:
               only: trunk
