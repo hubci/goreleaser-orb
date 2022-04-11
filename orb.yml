@@ -5,7 +5,7 @@ description: |
   publishing and release tool. You can publish Go projects to GitHub, Brew,
   Snap, and more.
 
-  Currently supports Linux on amd64 and arm64.
+  Currently supports Linux and macOS on amd64 and arm64.
 
 display:
   home_url: "https://circleci.com/developer/orbs/orb/hubci/goreleaser"
@@ -17,7 +17,7 @@ orbs:
 commands:
   install:
     description: |
-      Install GoReleaser in a job. This command supports Linux on both amd64 and arm64. Installs to ~/bin.
+      Install GoReleaser in a job. This command supports Linux and macOS on both amd64 and arm64. Installs to ~/bin.
     parameters:
       version:
         description: The GoReleaser version. This is a full SemVer version.
@@ -34,8 +34,25 @@ commands:
             # Get the CPU arch. This will also move to hubci/sphere in the future
             cpuArch=$( uname -m )
 
-            dlURL="https://github.com/goreleaser/goreleaser/releases/download/v<<parameters.version>>/goreleaser_Linux_${cpuArch}.tar.gz"
-            curl -sSL $dlURL | $SUDO tar -xz -C ~/bin goreleaser
+            # set the OS name for the asset URL
+            case $OSD_FAMILY in
+              linux)
+                osName="Linux"
+                installPath=~/bin
+                ;;
+              darwin)
+                osName="Darwin"
+                # this is done because CCI mac images don't have ~/bin in PATH
+                installPath=/usr/local/bin
+                ;;
+              *)
+                echo "Unsupported Operating System"
+                exit 1
+                ;;
+            esac
+
+            dlURL="https://github.com/goreleaser/goreleaser/releases/download/v<<parameters.version>>/goreleaser_${osName}_${cpuArch}.tar.gz"
+            curl -sSL $dlURL | $SUDO tar -xz -C ${installPath} goreleaser
   release:
     description: Run GoReleaser. Optionally without actually publishing.
     parameters:
