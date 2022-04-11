@@ -83,15 +83,19 @@ commands:
           you when true.
         type: boolean
         default: false
+      config:
+          description: Path to the config file.
+          type: string
+          default: ./.goreleaser.yaml
     steps:
       - when:
           condition: <<parameters.dry-run>>
           steps:
-            - run: goreleaser --snapshot --skip-publish --rm-dist
+            - run: goreleaser --snapshot --skip-publish --rm-dist --config=<< parameters.config >>
       - unless:
           condition: <<parameters.dry-run>>
           steps:
-            - run: goreleaser
+            - run: goreleaser --config=<< parameters.config >>
 
 jobs:
   release:
@@ -123,6 +127,10 @@ jobs:
         description: "Whether or not to run the CircleCI checkout step."
         type: boolean
         default: true
+      config:
+          description: Path to the config file.
+          type: string
+          default: ./.goreleaser.yaml
     executor:
       name: << parameters.image >>
       go-version: << parameters.go-version >>
@@ -135,9 +143,10 @@ jobs:
       - go/install:
           version: << parameters.go-version >>
       - install:
-          version: <<parameters.version>>
+          version: << parameters.version >>
       - release:
-          dry-run: <<parameters.dry-run>>
+          dry-run: << parameters.dry-run >>
+          config: << parameters.config >>
 
 examples:
   main:
