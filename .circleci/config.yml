@@ -40,10 +40,10 @@ workflows:
           orb-path: orb.yml
           requires:
             - orb-tools/lint
-          context: orbs
+          context: circleci-ctx
       - orb-tools/trigger-integration-tests-workflow:
           name: trigger-integration-dev
-          context: orbs
+          context: circleci-ctx
           requires:
             - orb-tools/publish-dev
   integration-test_deploy:
@@ -64,17 +64,17 @@ workflows:
                 - linux
                 - mac
               version:
-                - "1.3.0"
-                - "1.7.0"
+                - "1.15.0"
+                - "1.15.2"
               go-version:
-                - "1.17.7"
-                - "1.18"
+                - "1.19.5"
+                - "1.20"
               dry-run:
                 - true
       - gor/release:
           name: config-test
-          version: "1.7.0"
-          go-version: "1.18"
+          version: "1.15.2"
+          go-version: "1.19.5"
           dry-run: true
           config: "./.goreleaser-mac.yml"
       - orb-tools/dev-promote-prod-from-commit-subject:
@@ -89,8 +89,7 @@ workflows:
           filters:
             branches:
               only: trunk
-          context:
-            - orbs
+          context: circleci-ctx
   weekly-cron-wf:
     when:
       and:
@@ -104,7 +103,7 @@ workflows:
           orb-path: orb.yml
           requires:
             - orb-tools/lint
-          context: orbs
+          context: circleci-ctx
 
 
 jobs:
@@ -115,7 +114,7 @@ jobs:
     executor: <<parameters.runner>>
     steps:
       - gor/install:
-          version: "1.7.0"
+          version: "1.15.0"
       - run:
           name: "Try running GoReleaser"
           command: goreleaser --version

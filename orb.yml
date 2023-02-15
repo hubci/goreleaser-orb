@@ -79,7 +79,7 @@ commands:
     parameters:
       dry-run:
         description: |
-          Basically runs `goreleaser --snapshot --skip-publish --rm-dist` for
+          Basically runs `goreleaser --snapshot --skip-publish --clean` for
           you when true.
         type: boolean
         default: false
@@ -91,7 +91,7 @@ commands:
       - when:
           condition: <<parameters.dry-run>>
           steps:
-            - run: goreleaser --snapshot --skip-publish --rm-dist --config=<< parameters.config >>
+            - run: goreleaser --snapshot --skip-publish --clean --config=<< parameters.config >>
       - unless:
           condition: <<parameters.dry-run>>
           steps:
@@ -108,7 +108,7 @@ jobs:
         type: string
       dry-run:
         description: |
-          Basically runs `goreleaser --snapshot --skip-publish --rm-dist` for
+          Basically runs `goreleaser --snapshot --skip-publish --clean` for
           you when true.
         type: boolean
         default: false
