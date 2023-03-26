@@ -15,13 +15,13 @@ orbs:
 executors:
   cimg:
     docker:
-      - image: cimg/base:2022.04
+      - image: cimg/base:2023.01
   linux:
     machine:
-      image: ubuntu-2004:202201-02
+      image: ubuntu-2204:2023.02.1
   mac:
     macos:
-      xcode: 13.0.0
+      xcode: 14.0.0
 
 workflows:
   main-wf:

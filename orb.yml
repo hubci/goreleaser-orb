@@ -12,8 +12,8 @@ display:
   source_url: "https://github.com/hubci/goreleaser-orb"
 
 orbs:
-  ci: hubci/sphere@0.1
-  go: circleci/go@1.7
+  ci: hubci/sphere@0.2
+  go: circleci/go@1.7.1
 
 executors:
   cimg:
@@ -24,13 +24,13 @@ executors:
         type: string
   linux:
     machine:
-      image: ubuntu-2004:202201-02
+      image: ubuntu-2204:2023.02.1
     parameters:
       go-version:
         type: string
   mac:
     macos:
-      xcode: 13.0.0
+      xcode: 14.0.0
     parameters:
       go-version:
         type: string
