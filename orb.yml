@@ -131,6 +131,10 @@ jobs:
           description: Path to the config file.
           type: string
           default: ./.goreleaser.yaml
+      remote-docker:
+        description: "Whether or not to enable CircleCI's remote Docker within the job."
+        type: boolean
+        default: false
     executor:
       name: << parameters.image >>
       go-version: << parameters.go-version >>
@@ -144,6 +148,11 @@ jobs:
           version: << parameters.go-version >>
       - install:
           version: << parameters.version >>
+      - when:
+          condition: << parameters.remote-docker >>
+          steps:
+            - setup_remote_docker:
+                version: "20.10.24"
       - release:
           dry-run: << parameters.dry-run >>
           config: << parameters.config >>
